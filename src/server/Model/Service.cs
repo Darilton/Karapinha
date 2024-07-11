@@ -1,4 +1,6 @@
-﻿namespace Model;
+﻿using System.Text.Json.Serialization;
+
+namespace Model;
 
 public class Service
 {
@@ -7,5 +9,6 @@ public class Service
     public string? Description { get; set; }
 
     public int CategoryId { get; set; }
+    [JsonIgnore]
     public Category? Category { get; set; }
 }

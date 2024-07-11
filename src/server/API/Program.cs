@@ -3,6 +3,9 @@ using Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Make the api avaliable in lan
+builder.WebHost.UseUrls("http://0.0.0.0:5221");
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -27,6 +30,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors(builder => builder
+     .AllowAnyOrigin()
+     .AllowAnyMethod()
+     .AllowAnyHeader());
+
 
 app.MapControllers();
 
