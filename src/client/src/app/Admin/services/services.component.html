@@ -1,0 +1,19 @@
+<div class="container-fluid mt-2">
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Descricao</th>
+            </tr>
+        </thead>
+    
+        <tbody *ngFor="let service of Services">
+            <tr>
+                <td>{{service.id}}</td>
+                <td>{{service.name}}</td>
+                <td>{{service.description}}</td>
+            </tr>
+        </tbody>
+    </table>    
+</div>

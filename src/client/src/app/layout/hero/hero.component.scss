@@ -1,0 +1,17 @@
+#hero{
+    height: 80vh;
+    background-image: url("/images/HeroBackground.jpg");
+    background-size: cover;
+    background-position-x: center;
+}
+
+#hero-description{
+    background-color: rgba(0, 0, 0, 0.199);
+    border-radius: 10px;
+}
+
+@media only screen and (max-width: 500px) {
+    #hero{
+        height: 90vh;
+    }
+}
