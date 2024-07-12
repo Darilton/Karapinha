@@ -15,3 +15,15 @@ body, html{
 .link{
     cursor: pointer;
 }
+
+.link:hover{
+    text-decoration: underline;
+}
+
+.link-secondary{
+    color: grey;
+}
+
+.link-underline{
+    text-decoration: underline;
+}
