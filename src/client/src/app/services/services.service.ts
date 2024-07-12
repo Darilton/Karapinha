@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment.development';
 export class ServicesService {
   constructor(private http: HttpClient) { }
 
-  updateServices(): Observable<Service[]> {
+  getServices(): Observable<Service[]> {
     return this.http.get<Service[]>(`${environment.apiBaseUrl}/Service`);
   }
 }

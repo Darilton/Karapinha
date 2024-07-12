@@ -1,1 +1,27 @@
-<p>servicespage works!</p>
+<div class="container-fluid pt-2">
+    <h3 class="title">Serviços</h3>
+    <div class="row mb-2 pe-3">
+        <span class="col-auto">Selecione uma catégoria</span>
+        <select class="form-select form-select-sm col" aria-label="Default select example" #cto (change)="getCategoryServices(cto)">
+            <option selected (click)="getServices()">Todas</option>
+            <option *ngFor="let category of Categories" value="{{category.id}}">{{category.name}}</option>
+        </select>
+    </div>
+
+    
+   
+    <div *ngIf="Services.length > 0; else elseBlock">
+        <div class="d-flex flex-wrap">
+            <div class="card mb-2 me-1" *ngFor="let service of Services">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title mb-2">{{service.name}}</h5>
+                    <p class="card-text flex-fill">{{service.description}}</p>
+                    <a href="#" class="btn btn-dark">Agendar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #elseBlock>
+        Content to render when condition is false.
+    </ng-template>
+</div>

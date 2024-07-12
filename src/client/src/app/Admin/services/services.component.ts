@@ -15,7 +15,7 @@ export class ServicesComponent {
   constructor(private servicesService: ServicesService){}
 
   ngOnInit(): void {
-    this.servicesService.updateServices()
+    this.servicesService.getServices()
       .subscribe(
         res => this.Services = res as Service[],
         err => console.log(err)
