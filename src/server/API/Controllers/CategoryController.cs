@@ -1,4 +1,5 @@
 ﻿using Data;
+using DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model;
@@ -10,47 +11,50 @@ namespace API;
 [Route("[controller]")]
 public class CategoryController: ControllerBase
 {   
-    private readonly IGenericRepository<Category> repo;
-    public CategoryController(IGenericRepository<Category> repo){
-        this.repo = repo;
+    private readonly ICategoryService service;
+    public CategoryController(ICategoryService service){
+        this.service = service;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Category>>> Get(){
-        return Ok(await repo.GetAllAsync());
+    public async Task<ActionResult<IEnumerable<CategoryDTO>>> Get(){
+        return Ok(await service.GetCategories());
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Category>> Get(int id){
-        Category category = await repo.GetByIdAsync(id);
-
-        if(category == null)
-            return NotFound();
-        
-        return Ok(category);
+    [HttpGet("id")]
+    public async Task<ActionResult<CategoryDTO>> Get(int id){
+        return await service.GetCategory(id);
     }
-
-    // [HttpGet("{categoryId}/Services")]
-    // public ActionResult GetServices(int categoryId){
-    //     Category? category = db.Categories.Include(category => category.Services).FirstOrDefault(category => categoryId == category.Id);
-
-    //     if(category == null)
-    //         return NotFound("Category Not found");
-
-    //     return Ok(category.Services);
-    // }
 
     [HttpPost]
-    public async Task<ActionResult<Category>> Post([FromBody] Category category){
-        if(category == null)
+    public async Task<ActionResult<CategoryDTO>> AddCategory(string categoryName){
+        if(categoryName == null || categoryName.Length == 0)
             return BadRequest();
-        
-        Category cat = await repo.InsertAsync(category);
-        return Ok(cat);
+
+        return Ok(await service.AddCategory(categoryName));
     }
 
-    // [HttpDelete]
-    // public async Task<ActionResult> Delete(){
-    //     await repo.DeleteAsync();
-    // }
+    [HttpDelete("id")]
+    public async Task<ActionResult> Delete(int id){
+        var res = await service.DeleteCategory(id);
+
+        if(res == Shared.Response.NOT_FOUND)
+            return NotFound();
+        
+        return Ok();
+    }
+
+    [HttpPut("id")]
+    public async Task<ActionResult<CategoryDTO>> Put(int id, CategoryDTO category)
+    {   
+        if(id != category.Id)
+            return BadRequest();
+
+        var res = await service.EditCategory(id, category);
+
+        if(res == Shared.Response.NOT_FOUND)
+            return NotFound();
+
+        return Ok();
+    }
 }
