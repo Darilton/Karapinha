@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Model;
+using Shared;
+using Repository;
 using Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +17,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IGenericRepository<Category>, GenericRepository<Category>>();
+
 //register appdbcontext
 builder.Services.AddDbContext<AppDbCotnext>(option => 
     option.UseSqlite(builder.Configuration.GetConnectionString("sql"))
 );
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+    .AddEntityFrameworkStores<AppDbCotnext>();
 
 var app = builder.Build();
 
