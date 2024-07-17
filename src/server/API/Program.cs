@@ -5,6 +5,8 @@ using Shared;
 using Service;
 using Repository;
 using Data;
+using AutoMapper;
+using API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +20,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Automapper
+var mapperConfig = new MapperConfiguration(mc =>
+{   mc.AddProfile(new AutoMapperProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
 builder.Services.AddScoped<IGenericRepository<Category>, GenericRepository<Category>>();
+builder.Services.AddScoped<IGenericRepository<Model.Service>, GenericRepository<Model.Service>>();
+builder.Services.AddScoped<IGenericRepository<WorkingHour>, GenericRepository<WorkingHour>>();
+builder.Services.AddScoped<IWorkingHourService, WorkingHourService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
 
 //register appdbcontext
 builder.Services.AddDbContext<AppDbCotnext>(option => 

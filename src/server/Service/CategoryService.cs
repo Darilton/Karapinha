@@ -1,15 +1,18 @@
 ﻿using Shared;
 using Model;
 using DTO;
+using AutoMapper;
 
 namespace Service;
 
 public class CategoryService : ICategoryService
 {
     private readonly IGenericRepository<Category> _repository;
+    private readonly IMapper mapper;
 
-    public CategoryService(IGenericRepository<Category> _repository){
+    public CategoryService(IGenericRepository<Category> _repository, IMapper mapper){
         this._repository = _repository;
+        this.mapper = mapper;
     }
 
     public async Task<CategoryDTO> AddCategory(string categoryName)
@@ -20,10 +23,7 @@ public class CategoryService : ICategoryService
 
         newCategory = await _repository.InsertAsync(newCategory);
 
-        return new CategoryDTO(){
-            Name = newCategory.Name,
-            Id = newCategory.Id
-        };
+        return mapper.Map<CategoryDTO>(newCategory);
     }
 
     public async Task<Response> DeleteCategory(int id)
@@ -55,10 +55,7 @@ public class CategoryService : ICategoryService
         List<CategoryDTO> categoryDTOs = new List<CategoryDTO>();
 
         foreach (var category in Categories){
-            categoryDTOs.Add(new CategoryDTO(){
-                Name = category.Name,
-                Id = category.Id
-            });
+            categoryDTOs.Add(mapper.Map<CategoryDTO>(category));
         }
 
         return categoryDTOs;
@@ -70,9 +67,6 @@ public class CategoryService : ICategoryService
         if(category == null)
             return null!;
         
-        return new CategoryDTO(){
-            Name = category.Name,
-            Id = category.Id
-        };
+        return mapper.Map<CategoryDTO>(category);
     }
 }
