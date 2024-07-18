@@ -13,4 +13,6 @@ public class AppDbCotnext: IdentityDbContext<ApplicationUser>
     public DbSet<Appointment> Appointments{ get; set; }
     public DbSet<ServiceProfessionalAppointment> ServiceProfessionalAppointments{ get; set; }
     public DbSet<WorkingHour> workingHours{ get; set; }
+    public DbSet<Client> Clients{ get; set; }
+    public DbSet<Professional> Professionals{ get; set; }
 }

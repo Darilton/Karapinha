@@ -7,6 +7,7 @@ using Repository;
 using Data;
 using AutoMapper;
 using API;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +31,11 @@ builder.Services.AddSingleton(mapper);
 
 builder.Services.AddScoped<IGenericRepository<Category>, GenericRepository<Category>>();
 builder.Services.AddScoped<IGenericRepository<Model.Service>, GenericRepository<Model.Service>>();
+builder.Services.AddScoped<IGenericRepository<Image>, GenericRepository<Image>>();
 builder.Services.AddScoped<IGenericRepository<WorkingHour>, GenericRepository<WorkingHour>>();
 builder.Services.AddScoped<IWorkingHourService, WorkingHourService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 
@@ -43,7 +47,19 @@ builder.Services.AddDbContext<AppDbCotnext>(option =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbCotnext>();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Default Password settings.
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 2;
+    options.Password.RequiredUniqueChars = 1;
+});
 
 var app = builder.Build();
 

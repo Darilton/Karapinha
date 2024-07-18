@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Data;
 using DTO;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model;
+using Service;
 using Shared;
 
 namespace API;
@@ -13,35 +14,42 @@ namespace API;
 [Route("[controller]")]
 public class UserController :  ControllerBase
 {
-    private readonly UserManager<ApplicationUser> userManager; 
-    private readonly IMapper mapper;
+    private readonly IClientService clientService; 
+    private readonly IGenericRepository<Image> imageRepository;
 
-    public UserController(UserManager<ApplicationUser> userManager, IMapper mapper){
-        this.userManager = userManager;
-        this.mapper = mapper;
+    public UserController(IClientService clientService, IGenericRepository<Image> imageRepository){
+        this.clientService = clientService;
+        this.imageRepository = imageRepository;
     } 
 
     [HttpPost]
-    public async Task<ActionResult<ApplicationUser>> AddClient(IFormFile image, [FromForm] UserAddDTO user){
-        ApplicationUser newUser;
+    [AllowAnonymous]
+    public async Task<ActionResult<ApplicationUser>> AddClient([FromForm]ClientAddDTO client, IFormFile image){
+        byte[] userImage;
         using (var ms = new MemoryStream())
         {
             image.CopyTo(ms);
-            newUser = mapper.Map<ApplicationUser>(user); 
-            newUser.Image = new Image(){
-                Photo = ms.ToArray(),
-                Description = user.FirstName + "Profie Image"
-            };
+            userImage = ms.ToArray();
         }
-        var res = await userManager.CreateAsync(newUser, user.Password!);
-        if(!res.Succeeded)
-            return BadRequest(res.Errors);
+        ClientDTO newClient = await clientService.AddClient(client, userImage);
 
-        res = await userManager.AddToRoleAsync(newUser, "client");
+        if (newClient == null)
+            return BadRequest();
 
-        if(!res.Succeeded)
-            return BadRequest(res.Errors);
-            
-        return Ok(newUser);
+        return Ok(newClient);
+    }
+    [HttpGet("userId/image")]
+    public async Task<ActionResult<IFileHttpResult>> Get(string userId){
+        ClientDTO? client = await clientService.GetClientByIdAsync(userId);
+
+        if(client == null)
+            return NotFound();
+        
+        Image userPhoto = await imageRepository.GetByIdAsync(client.ImageId);
+
+        if(userPhoto == null)
+            return NotFound();
+
+        return File(userPhoto.Photo,"image/jpeg");
     }
 }

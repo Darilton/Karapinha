@@ -161,11 +161,6 @@ namespace Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -229,10 +224,6 @@ namespace Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Model.Appointment", b =>
@@ -241,8 +232,8 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ClientId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
@@ -268,6 +259,22 @@ namespace Data.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Model.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Clients");
+                });
+
             modelBuilder.Entity("Model.Image", b =>
                 {
                     b.Property<int>("Id")
@@ -285,6 +292,27 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("Model.Professional", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Professionals");
                 });
 
             modelBuilder.Entity("Model.Service", b =>
@@ -319,8 +347,8 @@ namespace Data.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ProfessionalId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ProfessionalId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("AppointmentId")
                         .HasColumnType("INTEGER");
@@ -343,33 +371,14 @@ namespace Data.Migrations
                     b.Property<TimeOnly>("Hour")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ProfessionalId")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("ProfessionalId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProfessionalId");
 
                     b.ToTable("workingHours");
-                });
-
-            modelBuilder.Entity("Model.Client", b =>
-                {
-                    b.HasBaseType("Model.ApplicationUser");
-
-                    b.HasDiscriminator().HasValue("Client");
-                });
-
-            modelBuilder.Entity("Model.Professional", b =>
-                {
-                    b.HasBaseType("Model.ApplicationUser");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasDiscriminator().HasValue("Professional");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -438,9 +447,37 @@ namespace Data.Migrations
                 {
                     b.HasOne("Model.Client", "Client")
                         .WithMany("Appointments")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Model.Client", b =>
+                {
+                    b.HasOne("Model.ApplicationUser", "userInfo")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("userInfo");
+                });
+
+            modelBuilder.Entity("Model.Professional", b =>
+                {
+                    b.HasOne("Model.ApplicationUser", "userInfo")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Model.Category", "Category")
+                        .WithMany("Professionals")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("userInfo");
                 });
 
             modelBuilder.Entity("Model.Service", b =>
@@ -486,17 +523,6 @@ namespace Data.Migrations
                     b.HasOne("Model.Professional", null)
                         .WithMany("WorkHours")
                         .HasForeignKey("ProfessionalId");
-                });
-
-            modelBuilder.Entity("Model.Professional", b =>
-                {
-                    b.HasOne("Model.Category", "Category")
-                        .WithMany("Professionals")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Model.Category", b =>

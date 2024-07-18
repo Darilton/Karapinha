@@ -9,7 +9,7 @@ public class Appointment
     public DateOnly Date { get; set; }
     
     [ForeignKey("Client")]
-    public string? ClientId { get; set; }
+    public int ClientId { get; set; }
     public Client Client { get; set; } = null!;
     ICollection<ServiceProfessionalAppointment>? ServiceProfessionalAppointments { get; set; }
 }
