@@ -17,5 +17,7 @@ public class AutoMapperProfile : Profile
 
         CreateMap<WorkingHourDTO, WorkingHour>().ReverseMap();
         CreateMap<WorkingHour, WorkingHourDTO>().ReverseMap();
+
+        CreateMap<UserAddDTO, ApplicationUser>();
     }
 }
