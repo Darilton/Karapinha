@@ -8,10 +8,10 @@ namespace Service;
 
 public class ClientService : IClientService
 {
-    private readonly IClientRepository clientRepository;
+    private readonly IGenericRepository<Client> clientRepository;
     private readonly IMapper mapper;
 
-    public ClientService(IClientRepository clientRepository, IMapper mapper){
+    public ClientService(IGenericRepository<Client> clientRepository, IMapper mapper){
         this.clientRepository = clientRepository;
         this.mapper = mapper;
     }
@@ -19,7 +19,7 @@ public class ClientService : IClientService
     public async Task<ClientDTO> AddClientAsync(ClientAddDTO newClient, ApplicationUser newUserDetails)
     {
         Client client = mapper.Map<Client>(newClient);
-        client.userInfo = newUserDetails;
+        client.ApplicationUser = newUserDetails;
 
         await clientRepository.InsertAsync(client);
         return mapper.Map<ClientDTO>(client);
@@ -36,8 +36,8 @@ public class ClientService : IClientService
 
         foreach (Client client in await clientRepository.GetAllAsync()){
             clients.Add(mapper.Map<ClientDTO>(client));
-            if(client.userInfo != null)
-                Console.WriteLine("Chegour aqui");
+            if(client.ApplicationUser != null)
+                Console.WriteLine(client.ApplicationUser.UserName);
         }
         
         return clients;

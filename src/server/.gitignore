@@ -3,6 +3,7 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+*/API/.db*
 # Ignore migrations folder
 */Migrations/*
 # dotenv files

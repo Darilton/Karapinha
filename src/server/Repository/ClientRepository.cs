@@ -15,12 +15,12 @@ public class ClientRepository : GenericRepository<Client>, IClientRepository
 
     public async Task<IEnumerable<Client>> GetClientsWithInclude()
     {
-        return await db.Clients.Include(client => client.userInfo).ToListAsync();
+        return await db.Clients.Include(client => client.ApplicationUser).ToListAsync();
     }
 
     public async Task<Client> GetClientWithInclude(int id)
     {
-        Client? client = await db.Clients.Include(client => client.userInfo).FirstOrDefaultAsync(client => client.Id == id);
+        Client? client = await db.Clients.Include(client => client.ApplicationUser).FirstOrDefaultAsync(client => client.Id == id);
 
         if(client == null) return null!;
 

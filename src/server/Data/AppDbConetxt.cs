@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Model;
 
@@ -15,4 +16,9 @@ public class AppDbCotnext: IdentityDbContext<ApplicationUser>
     public DbSet<WorkingHour> workingHours{ get; set; }
     public DbSet<Client> Clients{ get; set; }
     public DbSet<Professional> Professionals{ get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder){
+        modelBuilder.Entity<Client>().Navigation(e => e.ApplicationUser).AutoInclude();
+        base.OnModelCreating(modelBuilder);
+    }
 }
