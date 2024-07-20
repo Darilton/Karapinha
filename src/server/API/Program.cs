@@ -33,9 +33,10 @@ builder.Services.AddScoped<IGenericRepository<Category>, GenericRepository<Categ
 builder.Services.AddScoped<IGenericRepository<Model.Service>, GenericRepository<Model.Service>>();
 builder.Services.AddScoped<IGenericRepository<Image>, GenericRepository<Image>>();
 builder.Services.AddScoped<IGenericRepository<WorkingHour>, GenericRepository<WorkingHour>>();
+builder.Services.AddScoped<IGenericRepository<Professional>, GenericRepository<Professional>>();
 builder.Services.AddScoped<IWorkingHourService, WorkingHourService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IProfessionalService, ProfessionalService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 

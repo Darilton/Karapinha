@@ -13,4 +13,10 @@ public class ServiceProfessionalAppointment
 
     public int AppointmentId { get; set; }
     public Appointment Appointment { get; set; } = null!;
+
+    public DateOnly date {get; set; }
+
+    public int WorkingHourId { get; set; }
+    public WorkingHour WorkingHour { get; set; } = null!;
+    public float totalPrice { get; set; } = 0;
 }

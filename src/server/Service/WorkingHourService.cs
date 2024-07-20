@@ -23,7 +23,7 @@ public class WorkingHourService : IWorkingHourService
         if(minute <= 0 || minute >= 60)
             return null!;
         
-        if(hour <= 0 || hour >= 0)
+        if(hour <= 0 || hour >= 24)
             return null!;
         
 

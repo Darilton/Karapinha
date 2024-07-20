@@ -23,5 +23,8 @@ public class AutoMapperProfile : Profile
 
         CreateMap<ClientAddDTO, ApplicationUser>();
         CreateMap<ApplicationUser, ClientDTO>();
+
+        CreateMap<ProfessionalAddDTO, ApplicationUser>();
+        CreateMap<Professional, ProfessionalDTO>();
     }
 }
