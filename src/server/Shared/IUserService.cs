@@ -1,10 +1,13 @@
 ﻿using DTO;
+using Microsoft.AspNetCore.Identity;
 using Model;
 
 namespace Shared;
 
 public interface IUserService
 {
-    public Task<UserDTO> AddUser(UserAddDTO user, string role, Byte[] userPhoto);
+    public Task<IdentityResult> AddUserAsync(ApplicationUser user, string role, string password);
     public Task<ApplicationUser?> GetUserByIdAsync(string userId);
+    public Task<IEnumerable<ApplicationUser>> GetAllUsersAsync();
+    public Task<IdentityResult> RemoveUserAsync(string userId);
 }

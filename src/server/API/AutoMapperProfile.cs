@@ -19,9 +19,12 @@ public class AutoMapperProfile : Profile
         CreateMap<WorkingHour, WorkingHourDTO>().ReverseMap();
 
         CreateMap<UserAddDTO, ApplicationUser>();
+        CreateMap<UserAddDTO, ClientAddDTO>();
         CreateMap<ApplicationUser, UserDTO>();
 
-        CreateMap<ClientAddDTO, ApplicationUser>();
+        CreateMap<ClientAddDTO, Client>();
+        CreateMap<Client, ClientDTO>();
+        CreateMap<ClientAddDTO, UserAddDTO>();
         CreateMap<ApplicationUser, ClientDTO>();
 
         CreateMap<ProfessionalAddDTO, ApplicationUser>();

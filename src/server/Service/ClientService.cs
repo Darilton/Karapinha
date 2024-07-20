@@ -8,26 +8,38 @@ namespace Service;
 
 public class ClientService : IClientService
 {
-    private readonly UserManager<ApplicationUser> userManager;
+    private readonly IClientRepository clientRepository;
     private readonly IMapper mapper;
 
-    public ClientService(UserManager<ApplicationUser> userManager, IMapper mapper){
-        this.userManager = userManager;
+    public ClientService(IClientRepository clientRepository, IMapper mapper){
+        this.clientRepository = clientRepository;
         this.mapper = mapper;
     }
 
-    public async Task<ClientDTO> AddClient(ClientAddDTO client, byte[] clientPicture)
+    public async Task<ClientDTO> AddClientAsync(ClientAddDTO newClient, ApplicationUser newUserDetails)
     {
-        
-        return new ClientDTO(){};
+        Client client = mapper.Map<Client>(newClient);
+        client.userInfo = newUserDetails;
+
+        await clientRepository.InsertAsync(client);
+        return mapper.Map<ClientDTO>(client);
     }
 
-    public async Task<ClientDTO?> GetClientByIdAsync(string clientId)
+    public Task<ClientDTO> GetClientByIdAsync(string clientId)
     {
-        ApplicationUser? user = await userManager.FindByIdAsync(clientId);
-        if(user == null)
-            return null!;
+        throw new NotImplementedException();
+    }
 
-        return mapper.Map<ClientDTO?>(user);
+    public async Task<IEnumerable<ClientDTO>> GetClientsAsync()
+    {
+        List<ClientDTO> clients = new List<ClientDTO>();
+
+        foreach (Client client in await clientRepository.GetAllAsync()){
+            clients.Add(mapper.Map<ClientDTO>(client));
+            if(client.userInfo != null)
+                Console.WriteLine("Chegour aqui");
+        }
+        
+        return clients;
     }
 }

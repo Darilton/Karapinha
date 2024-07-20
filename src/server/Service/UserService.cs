@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DTO;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Model;
 using Shared;
 
@@ -10,40 +11,44 @@ public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> userManager;
     private readonly RoleManager<IdentityRole> roleManager;
-    private readonly IMapper mapper;
 
-    public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper){
+    public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager){
         this.userManager = userManager;
         this.roleManager = roleManager;
-        this.mapper = mapper;
     }
-    public async Task<UserDTO> AddUser(UserAddDTO user, string role, Byte[] userPhoto)
+
+    public async Task<IdentityResult> AddUserAsync(ApplicationUser user, string role, string password)
     {
-        ApplicationUser newUser = mapper.Map<ApplicationUser>(user);
-        newUser.Image = new Image(){
-            Photo = userPhoto,
-            Description = user.FirstName + "Profie Image"
-        };
-
-
-        var res = await userManager.CreateAsync(newUser, user.Password!);
+        var res = await userManager.CreateAsync(user, password);
         if(!res.Succeeded)
-            return null!;
+            return res;
 
-        bool roleExists = await roleManager.RoleExistsAsync(role);
-        if(!roleExists)
-            return null!;
+        if(! await roleManager.RoleExistsAsync(role)){
+            await userManager.DeleteAsync(user);
+            return IdentityResult.Failed();
+        }
 
-        res = await userManager.AddToRoleAsync(newUser, "client");
-
-        if(!res.Succeeded)
-            return null!;
+        res = await userManager.AddToRoleAsync(user, role);
         
-        return mapper.Map<UserDTO>(newUser);            
+        return res;
     }
 
-    Task<ApplicationUser?> IUserService.GetUserByIdAsync(string userId)
+    public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
     {
-        return userManager.FindByIdAsync(userId);
+        return await userManager.Users.ToListAsync();
+    }
+
+    public async Task<ApplicationUser?> GetUserByIdAsync(string userId)
+    {
+        return await userManager.FindByIdAsync(userId);
+    }
+
+    public async Task<IdentityResult> RemoveUserAsync(string userId)
+    {
+        ApplicationUser? user = await userManager.FindByIdAsync(userId);
+
+        if(user == null) return IdentityResult.Failed();
+
+        return await userManager.DeleteAsync(user);
     }
 }
