@@ -17,8 +17,8 @@ public class WorkingHourController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post(int hour, int minute, int seconds){      
-        return Ok(await service.AddHour(hour, minute, seconds));
+    public async Task<ActionResult<WorkingHourDTO>> Post([FromBody]WorkingHourAddDTO time){      
+        return Ok(await service.AddHour(time.Hour, time.Minute, time.Seconds));
     }
 
     [HttpGet]

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace DTO;
 
@@ -16,7 +17,8 @@ public class ProfessionalAddDTO
     
     [Length(minimumLength:14, maximumLength:14)]
     public string? Bilhete { get; set; }
-    public int categoryId { get; set; }
+    public int CategoryId { get; set; }
+    [PasswordPropertyText]
     public string? Password { get; set; }
-    ICollection<int>? WorkingHourIds { get; set; }
+    public IEnumerable<int>? WorkingHourIds { get; set; }
 }

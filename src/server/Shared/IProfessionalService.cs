@@ -6,5 +6,8 @@ namespace Shared;
 
 public interface IProfessionalService
 {
-    public Task<Tuple<ProfessionalDTO, string>> AddProfessional(ProfessionalAddDTO professional, byte[] image);
+    public Task<ProfessionalDTO> AddProfessionalAsync(ProfessionalAddDTO Professional, ApplicationUser newUserDetails);
+    public Task<ProfessionalDTO> GetProfessionalByIdAsync(int ProfessionalId);
+    public Task<IEnumerable<ProfessionalDTO>> GetProfessionalsAsync();
+    public Task<bool> DeleteProfessionalAsync(int ProfessionalId);
 }

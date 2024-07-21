@@ -12,7 +12,7 @@ public class Professional
 
     //it's information as user
     public string? ApplicationUserId { get; set; }
-    public ApplicationUser? userInfo{ get; set; }
+    public ApplicationUser? ApplicationUser{ get; set; }
 
     //A professional belongs to a category
     public int CategoryId { get; set; }

@@ -8,54 +8,68 @@ namespace Service;
 
 public class ProfessionalService : IProfessionalService
 {
-    private readonly UserManager<ApplicationUser> userManager;
     private readonly IGenericRepository<Professional> repo;
     private readonly IGenericRepository<Category> categoryRepo;
+    private readonly IGenericRepository<WorkingHour>  workingHourRepo;
     private readonly IMapper mapper;
 
-    public ProfessionalService(IGenericRepository<Category> categoryRepo, UserManager<ApplicationUser> userManager, IGenericRepository<Professional> repo, IMapper mapper)
+    public ProfessionalService(IGenericRepository<WorkingHour> workingHourRepo, IGenericRepository<Category> categoryRepo, UserManager<ApplicationUser> userManager, IGenericRepository<Professional> repo, IMapper mapper)
     {
         this.categoryRepo = categoryRepo;
         this.repo = repo;
-        this.userManager = userManager;
         this.mapper = mapper;
+        this.workingHourRepo = workingHourRepo;
     }
 
-    public async Task<Tuple<ProfessionalDTO, string>> AddProfessional(ProfessionalAddDTO professional, byte[] image)
+    public async Task<ProfessionalDTO> AddProfessionalAsync(ProfessionalAddDTO professional, ApplicationUser newUserDetails)
     {
-        ApplicationUser user = mapper.Map<ApplicationUser>(professional);
+        Category category = await categoryRepo.GetByIdAsync(professional.CategoryId);
+        if(category == null) return null!;
 
-        Category category = await categoryRepo.GetByIdAsync(professional.categoryId);
-        if(category == null)
-            return new Tuple<ProfessionalDTO, string>(null!, "Could not add professional because category does not exists");
 
-        user.Image = new Image(){
-            Photo = image,
-            Description = user.FirstName + "profile picture"
-        };
+        List<WorkingHour> workingHours = new List<WorkingHour>();
 
-        var res = await userManager.CreateAsync(user, professional.Password!);
-        if(!res.Succeeded){
-            string err = "";
-            foreach (var s in res.Errors)
-            {
-                err = new String(s.Description.ToArray<char>()) + "\n";
-            }
-            return new Tuple<ProfessionalDTO, string>(null!, new string(err.ToArray<char>()));
+        if(professional.WorkingHourIds != null)
+        foreach(int workingHourId in professional.WorkingHourIds){
+            WorkingHour workingHour =await workingHourRepo.GetByIdAsync(workingHourId);
+            if(workingHour == null) return null!;
+
+            workingHours.Add(workingHour);
         }
-        
-        await userManager.AddToRoleAsync(user, "professional");
 
-        Professional newProfessional = new Professional(){
-            userInfo = user,
-            Category = category
-        };
 
-        newProfessional = await repo.InsertAsync(newProfessional);
+        Professional newProfessional = mapper.Map<Professional>(professional);
         
-        if(professional == null)
-            return new Tuple<ProfessionalDTO, string>(null!, "Could not add new Professional. Please try again");
+        newProfessional.Category = category;
+        newProfessional.ApplicationUser = newUserDetails;
+        newProfessional.WorkHours = workingHours;
         
-        return new Tuple<ProfessionalDTO, string>(mapper.Map<ProfessionalDTO>(newProfessional), "");
+        return mapper.Map<ProfessionalDTO>(await repo.InsertAsync(newProfessional));
+    }
+
+    public Task<bool> DeleteProfessionalAsync(int ProfessionalId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ProfessionalDTO> GetProfessionalByIdAsync(int professionalId)
+    {
+        Professional professional = await repo.GetByIdAsync(professionalId);
+        if(professional == null) return null!;
+
+        return mapper.Map<ProfessionalDTO>(professional);
+    }
+
+    public async Task<IEnumerable<ProfessionalDTO>> GetProfessionalsAsync()
+    {
+        List<ProfessionalDTO> professionals = new List<ProfessionalDTO>();
+
+        foreach(Professional professional in await repo.GetAllAsync()){
+            ProfessionalDTO professionalDTO = mapper.Map<ProfessionalDTO>(professional);
+            professionalDTO.WorkHours = mapper.Map<WorkingHourDTO[]>(professional.WorkHours);
+            professionals.Add(professionalDTO);
+        }
+
+        return professionals;
     }
 }

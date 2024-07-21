@@ -17,16 +17,6 @@ public class WorkingHourService : IWorkingHourService
 
     public async Task<WorkingHourDTO> AddHour(int hour, int minute, int seconds)
     {
-        if(seconds <= 0 || seconds >= 60)
-            return null!;
-        
-        if(minute <= 0 || minute >= 60)
-            return null!;
-        
-        if(hour <= 0 || hour >= 24)
-            return null!;
-        
-
         WorkingHour newHour = await repository.InsertAsync(new WorkingHour(){
             Hour = new TimeOnly(hour, minute, seconds)
         });
@@ -46,15 +36,6 @@ public class WorkingHourService : IWorkingHourService
 
     public async Task<Response> EditHour(int id, WorkingHourDTO hour)
     {
-        if(hour.HourHour < 0 || hour.HourHour >= 60)
-            return Response.BAD_REQUEST;
-        
-        if(hour.HourMinute < 0 || hour.HourMinute >= 60)
-            return Response.BAD_REQUEST;
-        
-        if(hour.HourSecond < 0 || hour.HourSecond >= 60)
-            return Response.BAD_REQUEST;
-
         WorkingHour workingHour = await repository.GetByIdAsync(id);
 
         if(workingHour == null)

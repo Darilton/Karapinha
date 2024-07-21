@@ -1,5 +1,8 @@
-﻿using DTO;
+﻿using AutoMapper;
+using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Model;
 using Shared;
 
 namespace API;
@@ -9,24 +12,51 @@ namespace API;
 public class ProfessionalController : ControllerBase
 {
     private readonly IProfessionalService service;
+    private readonly IFileService fileService;
+    private readonly IUserService userService;
+    private readonly IMapper mapper;
 
-    public ProfessionalController(IProfessionalService service)
+
+    public ProfessionalController(IMapper mapper, IUserService userService, IFileService fileService,IProfessionalService service)
     {
         this.service = service;
+        this.fileService = fileService;
+        this.userService = userService;
+        this.mapper = mapper;
     }
+
+
     [HttpPost]
-    public async Task<ActionResult<ProfessionalDTO>> Post(IFormFile professionalImage, [FromForm]ProfessionalAddDTO professional){
-        byte[] image;
-        using (var ms = new MemoryStream()){
-            professionalImage.CopyTo(ms);
-            image = ms.ToArray();
-        }
+    [AllowAnonymous]
+    public async Task<ActionResult<ProfessionalDTO>> AddProfessional([FromForm] ProfessionalAddDTO professional, IFormFile image){
+        ApplicationUser user = mapper.Map<ApplicationUser>(professional);
 
-        Tuple<ProfessionalDTO, string> res = await service.AddProfessional(professional, image);
+        user.Image = new Image(){
+            Description = user.FirstName + "'s profile picture",
+            Photo = fileService.ToByteArray(image)
+        };
 
-        if(res.Item1 == null)
-            return BadRequest(res.Item2);
+        var res = await userService.AddUserAsync(user, "professional", professional.Password!);
+        if(!res.Succeeded){
+            return BadRequest(res.Errors);
+        } 
 
-        return Ok(res.Item1);
+        ProfessionalAddDTO newProfessional = mapper.Map<ProfessionalAddDTO>(professional);
+        ProfessionalDTO newUser = await service.AddProfessionalAsync(newProfessional, user);
+        return Ok(newUser);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ProfessionalDTO>> Get(){
+        return Ok(await service.GetProfessionalsAsync());
+    }
+
+    [HttpGet("id")]
+    public async Task<ActionResult<ProfessionalDTO>> Get(int id){
+        ProfessionalDTO professional = await service.GetProfessionalByIdAsync(id);
+
+        if(professional == null) return BadRequest("User Not Foutn");
+
+        return Ok(professional);
     }
 }

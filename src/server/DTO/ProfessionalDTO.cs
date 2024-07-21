@@ -2,11 +2,14 @@
 
 public class ProfessionalDTO
 {
-    public string? userInfoUserName { get; set; }
-    public string? userInfoFirstName { get; set; }
-    public string? userInfoLastName { get; set;}
-    public string? userInfoEmail { get; set; }
-    public string? userInfoPhoneNumber { get; set; }
-    public string? userInfoBilhete { get; set; }
+    public string? UserName { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set;}
+    public string? Email { get; set; }
+    public string? PhoneNumber { get; set; }
+    public string? Bilhete { get; set; }
     public int categoryId { get; set; }
+    public int ImageId { get; set; }
+
+    public ICollection<WorkingHourDTO>? WorkHours{ get; set; }
 }
