@@ -16,9 +16,4 @@ public class AppDbCotnext: IdentityDbContext<ApplicationUser>
     public DbSet<WorkingHour> workingHours{ get; set; }
     public DbSet<Client> Clients{ get; set; }
     public DbSet<Professional> Professionals{ get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder){
-        modelBuilder.Entity<Client>().Navigation(e => e.ApplicationUser).AutoInclude();
-        base.OnModelCreating(modelBuilder);
-    }
 }

@@ -3,9 +3,10 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-*/API/.db*
+API/database.db-shm
+API/database.db-wal
 # Ignore migrations folder
-*/Migrations/*
+Data/Migrations/*
 # dotenv files
 .env
 

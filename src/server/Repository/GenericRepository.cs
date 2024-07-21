@@ -12,7 +12,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         this.db = db;
         dbSet = db.Set<T>();
     }
-    public async Task DeleteByIdAsync(int id)
+    public virtual async Task DeleteByIdAsync(int id)
     {
         T? entity = await dbSet.FindAsync(id);
 

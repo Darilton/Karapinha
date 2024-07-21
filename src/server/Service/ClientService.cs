@@ -8,10 +8,10 @@ namespace Service;
 
 public class ClientService : IClientService
 {
-    private readonly IGenericRepository<Client> clientRepository;
+    private readonly IClientRepository clientRepository;
     private readonly IMapper mapper;
 
-    public ClientService(IGenericRepository<Client> clientRepository, IMapper mapper){
+    public ClientService(IClientRepository clientRepository, IMapper mapper){
         this.clientRepository = clientRepository;
         this.mapper = mapper;
     }
@@ -25,16 +25,30 @@ public class ClientService : IClientService
         return mapper.Map<ClientDTO>(client);
     }
 
-    public Task<ClientDTO> GetClientByIdAsync(string clientId)
+    public async Task<bool> DeleteClientAsync(int clientId)
     {
-        throw new NotImplementedException();
+        Client client = await clientRepository.GetByIdAsync(clientId);
+
+        if(client == null) return false;
+
+        await clientRepository.DeleteByIdAsync(clientId);
+        return true;
+    }
+
+    public async Task<ClientDTO> GetClientByIdAsync(int clientId)
+    {
+        Client client = await clientRepository.GetClientWithInclude(clientId);
+
+        if(client == null) return null!;
+
+        return mapper.Map<ClientDTO>(client);
     }
 
     public async Task<IEnumerable<ClientDTO>> GetClientsAsync()
     {
         List<ClientDTO> clients = new List<ClientDTO>();
 
-        foreach (Client client in await clientRepository.GetAllAsync()){
+        foreach (Client client in await clientRepository.GetClientsWithInclude()){
             clients.Add(mapper.Map<ClientDTO>(client));
             if(client.ApplicationUser != null)
                 Console.WriteLine(client.ApplicationUser.UserName);

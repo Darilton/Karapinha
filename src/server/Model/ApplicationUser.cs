@@ -16,4 +16,7 @@ public class ApplicationUser : IdentityUser
     [PersonalData]
     public int ImageId { get; set; }
     public Image Image { get; set; } = null!;
+
+    public Client Client { get; set; } = null!;
+    public Professional Professional { get; set; } = null!;
 }

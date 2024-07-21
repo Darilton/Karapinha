@@ -1,5 +1,6 @@
 ﻿using Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Model;
 using Shared;
 
@@ -25,5 +26,14 @@ public class ClientRepository : GenericRepository<Client>, IClientRepository
         if(client == null) return null!;
 
         return client;
+    }
+
+    public override async Task DeleteByIdAsync(int id){
+        Client? client = await db.Clients.Include(client => client.ApplicationUser).FirstOrDefaultAsync(client => client.Id == id);
+
+        if (client != null){
+            db.Clients.Remove(client);
+            await db.SaveChangesAsync();
+        }
     }
 }

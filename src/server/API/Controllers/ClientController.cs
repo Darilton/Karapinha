@@ -66,19 +66,19 @@ public class ClientController :  ControllerBase
         return Ok(await clientService.GetClientsAsync());
     }
 
-    // [HttpGet("id")]
-    // public async Task<ActionResult<ApplicationUser>> Get(string userId){
-    //     ApplicationUser? user = await userService.GetUserByIdAsync(userId);
-    //     if(user == null) return NotFound();
+    [HttpGet("id")]
+    public async Task<ActionResult<ClientDTO>> Get(int clientId){
+        ClientDTO? client = await clientService.GetClientByIdAsync(clientId);
+        if(client == null) return NotFound();
 
-    //     return Ok(user);
-    // }
+        return Ok(client);
+    }
 
     [HttpDelete]
-    public async Task<ActionResult> Delete(string userId){
-        var res = await userService.RemoveUserAsync(userId);
+    public async Task<ActionResult> Delete(int clientId){
+        bool res = await clientService.DeleteClientAsync(clientId);
         
-        if(!res.Succeeded) return NotFound("User Not Found");
+        if(!res) return NotFound("User Not Found");
 
         return Ok();
     }

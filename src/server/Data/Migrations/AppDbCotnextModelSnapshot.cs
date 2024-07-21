@@ -267,7 +267,8 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
 
                     b.ToTable("Clients");
                 });
@@ -305,7 +306,8 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
 
                     b.HasIndex("CategoryId");
 
@@ -464,18 +466,18 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Model.Client", b =>
                 {
-                    b.HasOne("Model.ApplicationUser", "userInfo")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
+                    b.HasOne("Model.ApplicationUser", "ApplicationUser")
+                        .WithOne("Client")
+                        .HasForeignKey("Model.Client", "ApplicationUserId");
 
-                    b.Navigation("userInfo");
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Model.Professional", b =>
                 {
                     b.HasOne("Model.ApplicationUser", "userInfo")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
+                        .WithOne("Professional")
+                        .HasForeignKey("Model.Professional", "ApplicationUserId");
 
                     b.HasOne("Model.Category", "Category")
                         .WithMany("Professionals")
@@ -539,6 +541,15 @@ namespace Data.Migrations
                     b.HasOne("Model.Professional", null)
                         .WithMany("WorkHours")
                         .HasForeignKey("ProfessionalId");
+                });
+
+            modelBuilder.Entity("Model.ApplicationUser", b =>
+                {
+                    b.Navigation("Client")
+                        .IsRequired();
+
+                    b.Navigation("Professional")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Model.Category", b =>
