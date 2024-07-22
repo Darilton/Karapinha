@@ -47,5 +47,16 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.ImageId!, opt => opt.MapFrom(src => src.ApplicationUser!.ImageId!));
        
         CreateMap<Professional, ProfessionalAddDTO>();
+        CreateMap<Appointment, AppointmentDTO>();
+        CreateMap<Appointment, AppointmentDTO>();
+        CreateMap<Appointment, AppointmentAddDTO>();
+        CreateMap<ServiceProfessionalAppointmentDTO, ServiceProfessionalAppointment>();
+        CreateMap<ServiceProfessionalAppointment, ServiceProfessionalAppointmentDTO>();
+
+        CreateMap<DateOnly, DateDTO>()
+            .ForMember(dest => dest.year, opt => opt.MapFrom(src => src.Year))
+            .ForMember(dest => dest.day, opt => opt.MapFrom(src => src.Day))
+            .ForMember(dest => dest.month, opt => opt.MapFrom(src => src.Month))
+            .ReverseMap();
     }
 }

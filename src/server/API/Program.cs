@@ -36,6 +36,8 @@ builder.Services.AddScoped<IGenericRepository<WorkingHour>, GenericRepository<Wo
 builder.Services.AddScoped<IGenericRepository<Client>, GenericRepository<Client>>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IGenericRepository<Professional>, GenericRepository<Professional>>();
+builder.Services.AddScoped<IGenericRepository<Appointment>, GenericRepository<Appointment>>();
+builder.Services.AddScoped<IGenericRepository<ServiceProfessionalAppointment>, GenericRepository<ServiceProfessionalAppointment>>();
 builder.Services.AddScoped<IWorkingHourService, WorkingHourService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfessionalService, ProfessionalService>();
@@ -43,7 +45,9 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IServiceProfessionalAppointmentService, ServiceProfessionalAppointmentService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 //register appdbcontext
 builder.Services.AddDbContext<AppDbCotnext>(option => 
@@ -78,12 +82,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseCors(builder => builder
      .AllowAnyOrigin()
      .AllowAnyMethod()
      .AllowAnyHeader());
+
+app.UseAuthorization();
 
 
 app.MapControllers();

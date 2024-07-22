@@ -20,6 +20,8 @@ public class AppDbCotnext: IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder){
         modelBuilder.Entity<Professional>().Navigation(p => p.ApplicationUser).AutoInclude();
         modelBuilder.Entity<Professional>().Navigation(p => p.WorkHours).AutoInclude();
+        modelBuilder.Entity<Category>().Navigation(p => p.Services).AutoInclude();
+        modelBuilder.Entity<Appointment>().Navigation(p => p.ServiceProfessionalAppointments).AutoInclude();
         base.OnModelCreating(modelBuilder);
     }
 }

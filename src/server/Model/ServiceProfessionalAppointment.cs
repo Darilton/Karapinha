@@ -18,5 +18,5 @@ public class ServiceProfessionalAppointment
 
     public int WorkingHourId { get; set; }
     public WorkingHour WorkingHour { get; set; } = null!;
-    public float totalPrice { get; set; } = 0;
+    public float Price { get; set; } = 0;
 }

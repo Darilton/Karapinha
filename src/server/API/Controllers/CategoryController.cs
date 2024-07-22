@@ -12,8 +12,10 @@ namespace API;
 public class CategoryController: ControllerBase
 {   
     private readonly ICategoryService service;
-    public CategoryController(ICategoryService service){
+    private readonly IServiceService serviceService;
+    public CategoryController(ICategoryService service, IServiceService serviceService){
         this.service = service;
+        this.serviceService = serviceService;
     }
 
     [HttpGet]
@@ -24,6 +26,11 @@ public class CategoryController: ControllerBase
     [HttpGet("id")]
     public async Task<ActionResult<CategoryDTO>> Get(int id){
         return await service.GetCategory(id);
+    }
+
+    [HttpGet("id/Services")]
+    public async Task<ActionResult<IEnumerable<ServiceDTO>>> GetCategoryServices(int id){
+        return Ok(await service.GetCategoryServices(id));
     }
 
     [HttpPost]

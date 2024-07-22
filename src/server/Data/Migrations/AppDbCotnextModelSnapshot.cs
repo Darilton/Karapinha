@@ -235,6 +235,9 @@ namespace Data.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<float>("TotalPrice")
+                        .HasColumnType("REAL");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
@@ -358,7 +361,7 @@ namespace Data.Migrations
                     b.Property<DateOnly>("date")
                         .HasColumnType("TEXT");
 
-                    b.Property<float>("totalPrice")
+                    b.Property<float>("price")
                         .HasColumnType("REAL");
 
                     b.HasKey("ServiceId", "ProfessionalId", "AppointmentId");
@@ -475,7 +478,7 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Model.Professional", b =>
                 {
-                    b.HasOne("Model.ApplicationUser", "userInfo")
+                    b.HasOne("Model.ApplicationUser", "ApplicationUser")
                         .WithOne("Professional")
                         .HasForeignKey("Model.Professional", "ApplicationUserId");
 
@@ -485,9 +488,9 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("ApplicationUser");
 
-                    b.Navigation("userInfo");
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Model.Service", b =>
@@ -504,7 +507,7 @@ namespace Data.Migrations
             modelBuilder.Entity("Model.ServiceProfessionalAppointment", b =>
                 {
                     b.HasOne("Model.Appointment", "Appointment")
-                        .WithMany()
+                        .WithMany("ServiceProfessionalAppointments")
                         .HasForeignKey("AppointmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -550,6 +553,11 @@ namespace Data.Migrations
 
                     b.Navigation("Professional")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Model.Appointment", b =>
+                {
+                    b.Navigation("ServiceProfessionalAppointments");
                 });
 
             modelBuilder.Entity("Model.Category", b =>

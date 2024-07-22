@@ -69,4 +69,13 @@ public class CategoryService : ICategoryService
         
         return mapper.Map<CategoryDTO>(category);
     }
+
+    public async Task<IEnumerable<ServiceDTO>> GetCategoryServices(int id)
+    {
+        Category category = await _repository.GetByIdAsync(id);
+
+        if(category == null) return null!;
+
+        return mapper.Map<IEnumerable<ServiceDTO>>(category.Services);
+    }
 }

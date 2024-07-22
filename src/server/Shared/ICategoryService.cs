@@ -10,4 +10,5 @@ public interface ICategoryService
     public Task<CategoryDTO> GetCategory(int id);
     public Task<Response> DeleteCategory(int id);
     public Task<Response> EditCategory(int id, CategoryDTO updatedCategory);
+    public Task<IEnumerable<ServiceDTO>> GetCategoryServices(int id);
 }
